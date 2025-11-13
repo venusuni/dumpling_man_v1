@@ -580,24 +580,55 @@
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = lang;
                 
-                // Select female English voice
-                const selectedVoice = voices.find(voice => 
-                    voice.lang.startsWith('en') && 
-                    (voice.name.toLowerCase().includes('female') || 
-                     voice.name.toLowerCase().includes('woman') ||
-                     voice.name.toLowerCase().includes('zira') ||
-                     voice.name.toLowerCase().includes('samantha') ||
-                     voice.name.toLowerCase().includes('google'))
-                );
+                // Priority order for energetic, natural female English voices
+                const voicePriority = [
+                    'google us english',      // Google voices are generally more natural
+                    'google uk english female',
+                    'samantha',               // iOS - natural and friendly
+                    'karen',                  // iOS Australian - energetic
+                    'victoria',               // iOS - clear and expressive
+                    'microsoft zira',         // Windows - natural female
+                    'zira',
+                    'female',
+                    'woman'
+                ];
+                
+                let selectedVoice = null;
+                
+                // Find the best voice based on priority
+                for (const priority of voicePriority) {
+                    selectedVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        voice.name.toLowerCase().includes(priority.toLowerCase())
+                    );
+                    if (selectedVoice) {
+                        console.log('✓ Using energetic voice:', selectedVoice.name);
+                        break;
+                    }
+                }
+                
+                // Fallback to any female English voice
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.toLowerCase().includes('female') || 
+                         voice.name.toLowerCase().includes('woman'))
+                    );
+                }
+                
+                // Last resort: any English voice
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+                }
                 
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
                     console.log('Using voice:', selectedVoice.name);
                 }
                 
-                // Optimized settings for clear English speech
-                utterance.rate = 0.9;
-                utterance.pitch = 1.1;
+                // Optimized settings for energetic, clear speech
+                utterance.rate = 1.05;  // Slightly faster for more energy
+                utterance.pitch = 1.2;  // Higher pitch for friendly, upbeat tone
                 utterance.volume = 1.0;
                 
                 // 添加视觉提示
