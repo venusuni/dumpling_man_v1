@@ -570,75 +570,108 @@
                             // Read Chinese name
                             const chineseName = titleEl.innerText.split('(')[0].trim();
                             textToSpeak = chineseName;
+                            
+                            // For mobile devices with poor Chinese TTS, use Google Translate API
+                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                            
+                            if (isMobile) {
+                                // Use Google Translate TTS for better Chinese pronunciation on mobile
+                                const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(textToSpeak)}`);
+                                
+                                // 添加视觉提示
+                                card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
+                                
+                                audio.onended = () => {
+                                    card.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
+                                };
+                                
+                                audio.onerror = () => {
+                                    // Fallback to browser TTS if Google Translate fails
+                                    useBrowserTTS(textToSpeak, selectedLanguage, card);
+                                };
+                                
+                                audio.play().catch(() => {
+                                    // If audio play fails, fallback to browser TTS
+                                    useBrowserTTS(textToSpeak, selectedLanguage, card);
+                                });
+                                
+                                return; // Exit early for mobile Chinese
+                            }
                         } else {
                             // Read English name
                             const englishName = descriptionEl.innerText;
                             textToSpeak = englishName;
                         }
                         
-                        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                        utterance.lang = selectedLanguage;
-                        
-                        // Select appropriate voice for the language
-                        let selectedVoice = null;
-                        
-                        if (selectedLanguage === 'zh-CN') {
-                            // Chinese voice selection - prioritize working Chinese voices
-                            selectedVoice = voices.find(voice => 
-                                (voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')) &&
-                                (voice.name.toLowerCase().includes('female') || 
-                                 voice.name.toLowerCase().includes('huihui') ||
-                                 voice.name.toLowerCase().includes('yaoyao') ||
-                                 voice.name.toLowerCase().includes('ting-ting') ||
-                                 voice.name.toLowerCase().includes('mei-jia') ||
-                                 voice.name.includes('中文'))
-                            );
-                            
-                            // Fallback to any Chinese voice
-                            if (!selectedVoice) {
-                                selectedVoice = voices.find(voice => 
-                                    voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')
-                                );
-                            }
-                        } else {
-                            // English voice selection
-                            selectedVoice = voices.find(voice => 
-                                voice.lang.startsWith('en') && 
-                                (voice.name.toLowerCase().includes('female') || 
-                                 voice.name.toLowerCase().includes('woman') ||
-                                 voice.name.toLowerCase().includes('zira') ||
-                                 voice.name.toLowerCase().includes('samantha') ||
-                                 voice.name.toLowerCase().includes('google'))
-                            );
-                            
-                            // Fallback to any English voice
-                            if (!selectedVoice) {
-                                selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-                            }
-                        }
-                        
-                        if (selectedVoice) {
-                            utterance.voice = selectedVoice;
-                        }
-                        
-                        // Additional settings for better mobile compatibility
-                        utterance.rate = 0.9; // Slightly slower for clarity
-                        utterance.pitch = 1.1; // Slightly higher pitch for female voice
-                        utterance.volume = 1.0;
-                        
-                        // 添加视觉提示
-                        card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
-
-                        // 朗读结束后移除视觉提示
-                        utterance.onend = () => {
-                            card.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
-                        };
-
-                        // 朗读
-                        synth.speak(utterance);
+                        // Use browser TTS for non-mobile or English
+                        useBrowserTTS(textToSpeak, selectedLanguage, card);
                     }
                 });
             });
+            
+            // Helper function for browser text-to-speech
+            function useBrowserTTS(text, lang, card) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                
+                // Select appropriate voice for the language
+                let selectedVoice = null;
+                
+                if (lang === 'zh-CN') {
+                    // Chinese voice selection - prioritize working Chinese voices
+                    selectedVoice = voices.find(voice => 
+                        (voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')) &&
+                        (voice.name.toLowerCase().includes('female') || 
+                         voice.name.toLowerCase().includes('huihui') ||
+                         voice.name.toLowerCase().includes('yaoyao') ||
+                         voice.name.toLowerCase().includes('ting-ting') ||
+                         voice.name.toLowerCase().includes('mei-jia') ||
+                         voice.name.includes('中文'))
+                    );
+                    
+                    // Fallback to any Chinese voice
+                    if (!selectedVoice) {
+                        selectedVoice = voices.find(voice => 
+                            voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')
+                        );
+                    }
+                } else {
+                    // English voice selection
+                    selectedVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.toLowerCase().includes('female') || 
+                         voice.name.toLowerCase().includes('woman') ||
+                         voice.name.toLowerCase().includes('zira') ||
+                         voice.name.toLowerCase().includes('samantha') ||
+                         voice.name.toLowerCase().includes('google'))
+                    );
+                    
+                    // Fallback to any English voice
+                    if (!selectedVoice) {
+                        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+                    }
+                }
+                
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+                
+                // Additional settings for better mobile compatibility
+                utterance.rate = 0.9; // Slightly slower for clarity
+                utterance.pitch = 1.1; // Slightly higher pitch for female voice
+                utterance.volume = 1.0;
+                
+                // 添加视觉提示
+                card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
+
+                // 朗读结束后移除视觉提示
+                utterance.onend = () => {
+                    card.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
+                };
+
+                // 朗读
+                synth.speak(utterance);
+            }
         });
     </script>
 
