@@ -112,6 +112,17 @@
             <p class="text-base sm:text-lg text-gray-600 text-center mt-2 sm:mt-3">
                 手工饺子 &amp; 中式风味小吃 &middot; Fairfax, VA
             </p>
+            
+            <!-- Language Selection for Audio -->
+            <div class="flex justify-center items-center gap-2 sm:gap-4 mt-4 sm:mt-6">
+                <span class="text-sm sm:text-base text-gray-600 font-medium">语音语言 (Audio Language):</span>
+                <button id="lang-chinese" class="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 bg-red-700 text-white shadow-md">
+                    中文 (Chinese)
+                </button>
+                <button id="lang-english" class="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300">
+                    English
+                </button>
+            </div>
         </div>
     </header>
 
@@ -450,16 +461,43 @@
             // 检查浏览器是否支持语音合成
             if (!('speechSynthesis' in window)) {
                 console.warn('抱歉，您的浏览器不支持语音合成功能。');
-                // 移除提示文字
+                // 移除提示文字和语言选择按钮
                 const audioHint = document.querySelector('.text-gray-500.mb-6.-mt-6');
                 if (audioHint) {
                     audioHint.remove();
+                }
+                const langButtons = document.querySelector('#lang-chinese')?.parentElement;
+                if (langButtons) {
+                    langButtons.remove();
                 }
                 return;
             }
 
             const synth = window.speechSynthesis;
             const audioImages = document.querySelectorAll('.clickable-audio-image');
+            
+            // Language selection state
+            let selectedLanguage = 'zh-CN'; // Default to Chinese
+            
+            const chineseBtn = document.getElementById('lang-chinese');
+            const englishBtn = document.getElementById('lang-english');
+            
+            // Language button click handlers
+            chineseBtn.addEventListener('click', () => {
+                selectedLanguage = 'zh-CN';
+                chineseBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                chineseBtn.classList.add('bg-red-700', 'text-white', 'shadow-md');
+                englishBtn.classList.remove('bg-red-700', 'text-white', 'shadow-md');
+                englishBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            });
+            
+            englishBtn.addEventListener('click', () => {
+                selectedLanguage = 'en-US';
+                englishBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+                englishBtn.classList.add('bg-red-700', 'text-white', 'shadow-md');
+                chineseBtn.classList.remove('bg-red-700', 'text-white', 'shadow-md');
+                chineseBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+            });
 
             audioImages.forEach(image => {
                 image.addEventListener('click', () => {
@@ -472,16 +510,21 @@
                     const descriptionEl = card.querySelector('p');
 
                     if (titleEl && descriptionEl) {
-                        const chineseName = titleEl.innerText.split('(')[0].trim(); // 去掉括号里的内容
-                        const englishName = descriptionEl.innerText;
+                        let textToSpeak = '';
                         
-                        // 组合成要朗读的文本
-                        const textToSpeak = `${chineseName}。${englishName}。`;
+                        // Based on selected language, choose what to read
+                        if (selectedLanguage === 'zh-CN') {
+                            // Read Chinese name
+                            const chineseName = titleEl.innerText.split('(')[0].trim();
+                            textToSpeak = chineseName;
+                        } else {
+                            // Read English name
+                            const englishName = descriptionEl.innerText;
+                            textToSpeak = englishName;
+                        }
                         
                         const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                        
-                        // 设置语言为中文，以确保中文发音正确
-                        utterance.lang = 'zh-CN'; 
+                        utterance.lang = selectedLanguage;
                         
                         // 添加视觉提示
                         card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
