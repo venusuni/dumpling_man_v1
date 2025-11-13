@@ -521,6 +521,10 @@
             let voices = [];
             function loadVoices() {
                 voices = synth.getVoices();
+                console.log('Available voices loaded:', voices.length);
+                // Log Chinese voices for debugging
+                const chineseVoices = voices.filter(v => v.lang.startsWith('zh'));
+                console.log('Chinese voices available:', chineseVoices.map(v => `${v.name} (${v.lang})`));
             }
             loadVoices();
             if (synth.onvoiceschanged !== undefined) {
@@ -609,32 +613,31 @@
                 
                 if (lang === 'zh-CN') {
                     // Chinese voice selection - prioritize high-quality FEMALE Mandarin voices only
-                    // Filter out Cantonese and male voices
+                    // Filter out Cantonese (but be more lenient for mobile)
                     const mandarinVoices = voices.filter(voice => {
                         const voiceName = voice.name.toLowerCase();
                         const voiceLang = voice.lang.toLowerCase();
                         
-                        // Exclude Cantonese voices
-                        if (voiceLang.includes('hk') || voiceLang.includes('yue') || 
-                            voiceName.includes('cantonese') || voiceName.includes('粤语')) {
+                        // Must be Chinese language
+                        if (!voiceLang.startsWith('zh')) {
                             return false;
                         }
                         
-                        // Exclude male voices
-                        if (voiceName.includes('male') && !voiceName.includes('female')) {
+                        // Exclude obvious Cantonese voices
+                        if (voiceName.includes('cantonese') || voiceName.includes('粤语')) {
                             return false;
                         }
                         
-                        // Only include Mandarin voices (zh-CN or zh with Mandarin indicator)
-                        return voiceLang === 'zh-cn' || 
-                               (voiceLang.startsWith('zh') && (
-                                   voiceName.includes('mandarin') || 
-                                   voiceName.includes('普通话') ||
-                                   voiceName.includes('中文') ||
-                                   voiceLang === 'zh' ||
-                                   voiceLang === 'zh-tw'
-                               ));
+                        // For mobile compatibility, accept zh-HK if no other options
+                        // Exclude male voices (but only if explicitly marked)
+                        if (voiceName.includes(' male') && !voiceName.includes('female')) {
+                            return false;
+                        }
+                        
+                        return true;
                     });
+                    
+                    console.log('Filtered Mandarin voices:', mandarinVoices.map(v => `${v.name} (${v.lang})`));
                     
                     // Priority order for FEMALE Mandarin voices (iOS and other platforms)
                     const voicePriority = [
@@ -645,7 +648,7 @@
                         // Google voices
                         'google 中文',
                         'google mandarin',
-                        'google chinese female',
+                        'google chinese',
                         // Microsoft voices
                         'microsoft huihui',    // Windows Female
                         'huihui',
@@ -663,24 +666,27 @@
                             voice.name.toLowerCase().includes(priority.toLowerCase())
                         );
                         if (selectedVoice) {
-                            console.log('Selected Chinese voice:', selectedVoice.name);
+                            console.log('✓ Selected Chinese voice:', selectedVoice.name, '|', selectedVoice.lang);
                             break;
                         }
                     }
                     
-                    // If still no voice found, try to find any female voice
+                    // If still no voice found, try zh-CN specifically
                     if (!selectedVoice) {
-                        selectedVoice = mandarinVoices.find(voice => 
-                            voice.name.toLowerCase().includes('female') ||
-                            voice.name.toLowerCase().includes('woman') ||
-                            voice.name.includes('女')
-                        );
+                        selectedVoice = mandarinVoices.find(voice => voice.lang === 'zh-CN');
+                        if (selectedVoice) {
+                            console.log('✓ Using zh-CN voice:', selectedVoice.name);
+                        }
                     }
                     
-                    // Last resort: use first available Mandarin voice
+                    // Last resort: use first available Chinese voice
                     if (!selectedVoice && mandarinVoices.length > 0) {
                         selectedVoice = mandarinVoices[0];
-                        console.log('Fallback to first Mandarin voice:', selectedVoice.name);
+                        console.log('⚠ Fallback to first available:', selectedVoice.name, '|', selectedVoice.lang);
+                    }
+                    
+                    if (!selectedVoice) {
+                        console.error('❌ No Chinese voice found! Available voices:', voices.length);
                     }
                     
                     // Optimize settings for Chinese speech with higher pitch for female voice
