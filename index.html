@@ -115,13 +115,12 @@
             
             <!-- Language Selection for Audio -->
             <div class="flex justify-center items-center gap-2 sm:gap-4 mt-4 sm:mt-6">
-                <span class="text-sm sm:text-base text-gray-600 font-medium">语音语言 (Audio Language):</span>
-                <button id="lang-chinese" class="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 bg-red-700 text-white shadow-md">
-                    中文 (Chinese)
-                </button>
-                <button id="lang-english" class="px-3 sm:px-4 py-2 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 bg-gray-200 text-gray-700 hover:bg-gray-300">
-                    English
-                </button>
+                <span class="text-sm sm:text-base text-gray-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 inline-block -mt-1 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.828 2.828a1 1 0 011.414 0A5.98 5.98 0 0115 10a5.98 5.98 0 01-1.757 4.243 1 1 0 01-1.414-1.414A3.986 3.986 0 0013 10a3.986 3.986 0 00-1.172-2.828 1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Click on images to hear descriptions in English
+                </span>
             </div>
         </div>
     </header>
@@ -323,7 +322,19 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
 
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
-                    <img src="images/wontons/dan huang yundun.png" alt="[图片：咸蛋黄猪肉馄饨]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="relative">
+                        <video controls playsinline class="w-full h-40 sm:h-48 object-cover">
+                            <source src="videos/menu-items/salted-egg-yolk-wonton.mp4" type="video/mp4">
+                            <!-- Fallback image if video not available -->
+                            <img src="images/wontons/dan huang yundun.png" alt="[图片：咸蛋黄猪肉馄饨]" class="w-full h-40 sm:h-48 object-cover">
+                        </video>
+                        <!-- Audio play button overlay -->
+                        <button class="clickable-audio-image absolute top-2 right-2 bg-white bg-opacity-90 rounded-full p-2 shadow-lg hover:bg-opacity-100 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                    </div>
                     <div class="p-4 sm:p-6">
                         <div class="flex justify-between items-start mb-2">
                             <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">咸蛋黄猪肉馄饨 (汤)</h4>
@@ -514,42 +525,19 @@
             const synth = window.speechSynthesis;
             const audioImages = document.querySelectorAll('.clickable-audio-image');
             
-            // Language selection state
-            let selectedLanguage = 'zh-CN'; // Default to Chinese
+            // Always use English
+            const selectedLanguage = 'en-US';
             
             // Load voices (some browsers need this)
             let voices = [];
             function loadVoices() {
                 voices = synth.getVoices();
                 console.log('Available voices loaded:', voices.length);
-                // Log Chinese voices for debugging
-                const chineseVoices = voices.filter(v => v.lang.startsWith('zh'));
-                console.log('Chinese voices available:', chineseVoices.map(v => `${v.name} (${v.lang})`));
             }
             loadVoices();
             if (synth.onvoiceschanged !== undefined) {
                 synth.onvoiceschanged = loadVoices;
             }
-            
-            const chineseBtn = document.getElementById('lang-chinese');
-            const englishBtn = document.getElementById('lang-english');
-            
-            // Language button click handlers
-            chineseBtn.addEventListener('click', () => {
-                selectedLanguage = 'zh-CN';
-                chineseBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                chineseBtn.classList.add('bg-red-700', 'text-white', 'shadow-md');
-                englishBtn.classList.remove('bg-red-700', 'text-white', 'shadow-md');
-                englishBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            });
-            
-            englishBtn.addEventListener('click', () => {
-                selectedLanguage = 'en-US';
-                englishBtn.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-                englishBtn.classList.add('bg-red-700', 'text-white', 'shadow-md');
-                chineseBtn.classList.remove('bg-red-700', 'text-white', 'shadow-md');
-                chineseBtn.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
-            });
 
             audioImages.forEach(image => {
                 image.addEventListener('click', () => {
@@ -567,35 +555,19 @@
                     const descriptionEl = card.querySelector('p');
 
                     if (titleEl && descriptionEl) {
-                        let textToSpeak = '';
-                        
                         // Get all text content from the card
-                        const chineseName = titleEl.innerText.split('(')[0].trim();
                         const englishName = descriptionEl.innerText;
                         
-                        // Get Chinese and English descriptions
+                        // Get English description
                         const allParagraphs = card.querySelectorAll('p');
-                        let chineseDescription = '';
                         let englishDescription = '';
                         
                         if (allParagraphs.length >= 3) {
-                            chineseDescription = allParagraphs[1].innerText; // Second <p> is Chinese description
                             englishDescription = allParagraphs[2].innerText; // Third <p> is English description
                         }
                         
-                        // Based on selected language, choose what to read
-                        if (selectedLanguage === 'zh-CN') {
-                            // Read Chinese name and description
-                            textToSpeak = `${chineseName}。${chineseDescription}`;
-                            
-                            // Use browser TTS with optimized settings for Chinese
-                            // Google Translate TTS often sounds robotic, so we'll use device native voices
-                            useBrowserTTS(textToSpeak, selectedLanguage, card);
-                            return;
-                        } else {
-                            // Read English name and description
-                            textToSpeak = `${englishName}. ${englishDescription}`;
-                        }
+                        // Read English name and description
+                        const textToSpeak = `${englishName}. ${englishDescription}`;
                         
                         // Use browser TTS for English
                         useBrowserTTS(textToSpeak, selectedLanguage, card);
@@ -608,117 +580,25 @@
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = lang;
                 
-                // Select appropriate voice for the language
-                let selectedVoice = null;
-                
-                if (lang === 'zh-CN') {
-                    // Chinese voice selection - prioritize high-quality FEMALE Mandarin voices only
-                    // Filter out Cantonese (but be more lenient for mobile)
-                    const mandarinVoices = voices.filter(voice => {
-                        const voiceName = voice.name.toLowerCase();
-                        const voiceLang = voice.lang.toLowerCase();
-                        
-                        // Must be Chinese language
-                        if (!voiceLang.startsWith('zh')) {
-                            return false;
-                        }
-                        
-                        // Exclude obvious Cantonese voices
-                        if (voiceName.includes('cantonese') || voiceName.includes('粤语')) {
-                            return false;
-                        }
-                        
-                        // For mobile compatibility, accept zh-HK if no other options
-                        // Exclude male voices (but only if explicitly marked)
-                        if (voiceName.includes(' male') && !voiceName.includes('female')) {
-                            return false;
-                        }
-                        
-                        return true;
-                    });
-                    
-                    console.log('Filtered Mandarin voices:', mandarinVoices.map(v => `${v.name} (${v.lang})`));
-                    
-                    // Priority order for FEMALE Mandarin voices (iOS and other platforms)
-                    const voicePriority = [
-                        // iOS voices (highest priority)
-                        'ting-ting',           // iOS Mandarin Female (best quality)
-                        'mei-jia',             // iOS Taiwan Female
-                        'sin-ji',              // iOS Taiwan Female (alternative)
-                        // Google voices
-                        'google 中文',
-                        'google mandarin',
-                        'google chinese',
-                        // Microsoft voices
-                        'microsoft huihui',    // Windows Female
-                        'huihui',
-                        'microsoft yaoyao',    // Windows Female
-                        'yaoyao',
-                        // Generic female markers
-                        'female',
-                        'woman',
-                        '女'
-                    ];
-                    
-                    // Find the best FEMALE Mandarin voice based on priority
-                    for (const priority of voicePriority) {
-                        selectedVoice = mandarinVoices.find(voice => 
-                            voice.name.toLowerCase().includes(priority.toLowerCase())
-                        );
-                        if (selectedVoice) {
-                            console.log('✓ Selected Chinese voice:', selectedVoice.name, '|', selectedVoice.lang);
-                            break;
-                        }
-                    }
-                    
-                    // If still no voice found, try zh-CN specifically
-                    if (!selectedVoice) {
-                        selectedVoice = mandarinVoices.find(voice => voice.lang === 'zh-CN');
-                        if (selectedVoice) {
-                            console.log('✓ Using zh-CN voice:', selectedVoice.name);
-                        }
-                    }
-                    
-                    // Last resort: use first available Chinese voice
-                    if (!selectedVoice && mandarinVoices.length > 0) {
-                        selectedVoice = mandarinVoices[0];
-                        console.log('⚠ Fallback to first available:', selectedVoice.name, '|', selectedVoice.lang);
-                    }
-                    
-                    if (!selectedVoice) {
-                        console.error('❌ No Chinese voice found! Available voices:', voices.length);
-                    }
-                    
-                    // Optimize settings for Chinese speech with higher pitch for female voice
-                    utterance.rate = 0.8; // Slower for better clarity
-                    utterance.pitch = 1.3; // Higher pitch for more natural female voice
-                    utterance.volume = 1.0;
-                } else {
-                    // English voice selection
-                    selectedVoice = voices.find(voice => 
-                        voice.lang.startsWith('en') && 
-                        (voice.name.toLowerCase().includes('female') || 
-                         voice.name.toLowerCase().includes('woman') ||
-                         voice.name.toLowerCase().includes('zira') ||
-                         voice.name.toLowerCase().includes('samantha') ||
-                         voice.name.toLowerCase().includes('google'))
-                    );
-                    
-                    // Fallback to any English voice
-                    if (!selectedVoice) {
-                        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-                    }
-                    
-                    // Standard settings for English
-                    utterance.rate = 0.9;
-                    utterance.pitch = 1.1;
-                    utterance.volume = 1.0;
-                }
+                // Select female English voice
+                const selectedVoice = voices.find(voice => 
+                    voice.lang.startsWith('en') && 
+                    (voice.name.toLowerCase().includes('female') || 
+                     voice.name.toLowerCase().includes('woman') ||
+                     voice.name.toLowerCase().includes('zira') ||
+                     voice.name.toLowerCase().includes('samantha') ||
+                     voice.name.toLowerCase().includes('google'))
+                );
                 
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
-                    console.log('Using voice:', selectedVoice.name, '| Lang:', selectedVoice.lang);
+                    console.log('Using voice:', selectedVoice.name);
                 }
+                
+                // Optimized settings for clear English speech
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                utterance.volume = 1.0;
                 
                 // 添加视觉提示
                 card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
