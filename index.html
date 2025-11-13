@@ -479,6 +479,16 @@
             // Language selection state
             let selectedLanguage = 'zh-CN'; // Default to Chinese
             
+            // Load voices (some browsers need this)
+            let voices = [];
+            function loadVoices() {
+                voices = synth.getVoices();
+            }
+            loadVoices();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = loadVoices;
+            }
+            
             const chineseBtn = document.getElementById('lang-chinese');
             const englishBtn = document.getElementById('lang-english');
             
@@ -525,6 +535,22 @@
                         
                         const utterance = new SpeechSynthesisUtterance(textToSpeak);
                         utterance.lang = selectedLanguage;
+                        
+                        // Select female voice
+                        const femaleVoice = voices.find(voice => 
+                            voice.lang.startsWith(selectedLanguage.split('-')[0]) && 
+                            (voice.name.toLowerCase().includes('female') || 
+                             voice.name.toLowerCase().includes('woman') ||
+                             voice.name.toLowerCase().includes('zira') ||
+                             voice.name.toLowerCase().includes('huihui') ||
+                             voice.name.toLowerCase().includes('yaoyao') ||
+                             voice.name.toLowerCase().includes('google us english') ||
+                             voice.name.toLowerCase().includes('samantha'))
+                        );
+                        
+                        if (femaleVoice) {
+                            utterance.voice = femaleVoice;
+                        }
                         
                         // 添加视觉提示
                         card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
