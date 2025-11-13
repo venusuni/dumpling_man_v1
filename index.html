@@ -584,38 +584,16 @@
                             // Read Chinese name and description
                             textToSpeak = `${chineseName}。${chineseDescription}`;
                             
-                            // For mobile devices with poor Chinese TTS, use Google Translate API
-                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                            
-                            if (isMobile) {
-                                // Use Google Translate TTS for better Chinese pronunciation on mobile
-                                const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&tl=zh-CN&client=tw-ob&q=${encodeURIComponent(textToSpeak)}`);
-                                
-                                // 添加视觉提示
-                                card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
-                                
-                                audio.onended = () => {
-                                    card.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
-                                };
-                                
-                                audio.onerror = () => {
-                                    // Fallback to browser TTS if Google Translate fails
-                                    useBrowserTTS(textToSpeak, selectedLanguage, card);
-                                };
-                                
-                                audio.play().catch(() => {
-                                    // If audio play fails, fallback to browser TTS
-                                    useBrowserTTS(textToSpeak, selectedLanguage, card);
-                                });
-                                
-                                return; // Exit early for mobile Chinese
-                            }
+                            // Use browser TTS with optimized settings for Chinese
+                            // Google Translate TTS often sounds robotic, so we'll use device native voices
+                            useBrowserTTS(textToSpeak, selectedLanguage, card);
+                            return;
                         } else {
                             // Read English name and description
                             textToSpeak = `${englishName}. ${englishDescription}`;
                         }
                         
-                        // Use browser TTS for non-mobile or English
+                        // Use browser TTS for English
                         useBrowserTTS(textToSpeak, selectedLanguage, card);
                     }
                 });
@@ -630,23 +608,38 @@
                 let selectedVoice = null;
                 
                 if (lang === 'zh-CN') {
-                    // Chinese voice selection - prioritize working Chinese voices
-                    selectedVoice = voices.find(voice => 
-                        (voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')) &&
-                        (voice.name.toLowerCase().includes('female') || 
-                         voice.name.toLowerCase().includes('huihui') ||
-                         voice.name.toLowerCase().includes('yaoyao') ||
-                         voice.name.toLowerCase().includes('ting-ting') ||
-                         voice.name.toLowerCase().includes('mei-jia') ||
-                         voice.name.includes('中文'))
+                    // Chinese voice selection - prioritize high-quality Chinese voices
+                    // Try to find the best available Chinese voice
+                    const chineseVoices = voices.filter(voice => 
+                        voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || 
+                        voice.lang === 'zh-HK' || voice.lang.startsWith('zh')
                     );
                     
-                    // Fallback to any Chinese voice
-                    if (!selectedVoice) {
-                        selectedVoice = voices.find(voice => 
-                            voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')
+                    // Priority order for Chinese voices (best quality first)
+                    const voicePriority = [
+                        'google 中文', 'google mandarin', 'google chinese',
+                        'ting-ting', 'sin-ji', 'mei-jia',
+                        'yaoyao', 'huihui',
+                        'female', 'woman', '女'
+                    ];
+                    
+                    // Find the best voice based on priority
+                    for (const priority of voicePriority) {
+                        selectedVoice = chineseVoices.find(voice => 
+                            voice.name.toLowerCase().includes(priority.toLowerCase())
                         );
+                        if (selectedVoice) break;
                     }
+                    
+                    // Fallback to any Chinese voice
+                    if (!selectedVoice && chineseVoices.length > 0) {
+                        selectedVoice = chineseVoices[0];
+                    }
+                    
+                    // Optimize settings for Chinese speech
+                    utterance.rate = 0.85; // Slower for better clarity in Chinese
+                    utterance.pitch = 1.2; // Higher pitch for more natural female voice
+                    utterance.volume = 1.0;
                 } else {
                     // English voice selection
                     selectedVoice = voices.find(voice => 
@@ -662,16 +655,17 @@
                     if (!selectedVoice) {
                         selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
                     }
+                    
+                    // Standard settings for English
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 1.0;
                 }
                 
                 if (selectedVoice) {
                     utterance.voice = selectedVoice;
+                    console.log('Using voice:', selectedVoice.name, '| Lang:', selectedVoice.lang);
                 }
-                
-                // Additional settings for better mobile compatibility
-                utterance.rate = 0.9; // Slightly slower for clarity
-                utterance.pitch = 1.1; // Slightly higher pitch for female voice
-                utterance.volume = 1.0;
                 
                 // 添加视觉提示
                 card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
