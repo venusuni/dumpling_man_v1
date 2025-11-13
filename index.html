@@ -565,11 +565,24 @@
                     if (titleEl && descriptionEl) {
                         let textToSpeak = '';
                         
+                        // Get all text content from the card
+                        const chineseName = titleEl.innerText.split('(')[0].trim();
+                        const englishName = descriptionEl.innerText;
+                        
+                        // Get Chinese and English descriptions
+                        const allParagraphs = card.querySelectorAll('p');
+                        let chineseDescription = '';
+                        let englishDescription = '';
+                        
+                        if (allParagraphs.length >= 3) {
+                            chineseDescription = allParagraphs[1].innerText; // Second <p> is Chinese description
+                            englishDescription = allParagraphs[2].innerText; // Third <p> is English description
+                        }
+                        
                         // Based on selected language, choose what to read
                         if (selectedLanguage === 'zh-CN') {
-                            // Read Chinese name
-                            const chineseName = titleEl.innerText.split('(')[0].trim();
-                            textToSpeak = chineseName;
+                            // Read Chinese name and description
+                            textToSpeak = `${chineseName}。${chineseDescription}`;
                             
                             // For mobile devices with poor Chinese TTS, use Google Translate API
                             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -598,9 +611,8 @@
                                 return; // Exit early for mobile Chinese
                             }
                         } else {
-                            // Read English name
-                            const englishName = descriptionEl.innerText;
-                            textToSpeak = englishName;
+                            // Read English name and description
+                            textToSpeak = `${englishName}. ${englishDescription}`;
                         }
                         
                         // Use browser TTS for non-mobile or English
