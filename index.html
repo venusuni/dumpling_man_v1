@@ -608,32 +608,50 @@
                 let selectedVoice = null;
                 
                 if (lang === 'zh-CN') {
-                    // Chinese voice selection - prioritize high-quality Chinese voices
-                    // Try to find the best available Chinese voice
-                    const chineseVoices = voices.filter(voice => 
-                        voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || 
-                        voice.lang === 'zh-HK' || voice.lang.startsWith('zh')
-                    );
+                    // Chinese voice selection - prioritize high-quality Mandarin voices only
+                    // Filter out Cantonese (zh-HK, yue) and Taiwanese voices
+                    const mandarinVoices = voices.filter(voice => {
+                        const voiceName = voice.name.toLowerCase();
+                        const voiceLang = voice.lang.toLowerCase();
+                        
+                        // Exclude Cantonese voices
+                        if (voiceLang.includes('hk') || voiceLang.includes('yue') || 
+                            voiceName.includes('cantonese') || voiceName.includes('粤语')) {
+                            return false;
+                        }
+                        
+                        // Only include Mandarin voices (zh-CN or zh with Mandarin indicator)
+                        return voiceLang === 'zh-cn' || 
+                               (voiceLang.startsWith('zh') && (
+                                   voiceName.includes('mandarin') || 
+                                   voiceName.includes('普通话') ||
+                                   voiceName.includes('中文') ||
+                                   voiceLang === 'zh' ||
+                                   voiceLang === 'zh-tw'
+                               ));
+                    });
                     
-                    // Priority order for Chinese voices (best quality first)
+                    // Priority order for Mandarin voices (best quality first)
                     const voicePriority = [
                         'google 中文', 'google mandarin', 'google chinese',
-                        'ting-ting', 'sin-ji', 'mei-jia',
-                        'yaoyao', 'huihui',
+                        'microsoft huihui', 'huihui',
+                        'microsoft yaoyao', 'yaoyao',
+                        'ting-ting',
+                        'sin-ji', 'mei-jia',
                         'female', 'woman', '女'
                     ];
                     
-                    // Find the best voice based on priority
+                    // Find the best Mandarin voice based on priority
                     for (const priority of voicePriority) {
-                        selectedVoice = chineseVoices.find(voice => 
+                        selectedVoice = mandarinVoices.find(voice => 
                             voice.name.toLowerCase().includes(priority.toLowerCase())
                         );
                         if (selectedVoice) break;
                     }
                     
-                    // Fallback to any Chinese voice
-                    if (!selectedVoice && chineseVoices.length > 0) {
-                        selectedVoice = chineseVoices[0];
+                    // Fallback to first available Mandarin voice
+                    if (!selectedVoice && mandarinVoices.length > 0) {
+                        selectedVoice = mandarinVoices[0];
                     }
                     
                     // Optimize settings for Chinese speech
