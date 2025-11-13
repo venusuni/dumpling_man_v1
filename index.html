@@ -513,6 +513,11 @@
                 image.addEventListener('click', () => {
                     // 如果正在朗读，先停止
                     synth.cancel();
+                    
+                    // Ensure voices are loaded (important for mobile)
+                    if (voices.length === 0) {
+                        voices = synth.getVoices();
+                    }
 
                     // 找到对应的卡片元素
                     const card = image.closest('.bg-white');
@@ -536,21 +541,52 @@
                         const utterance = new SpeechSynthesisUtterance(textToSpeak);
                         utterance.lang = selectedLanguage;
                         
-                        // Select female voice
-                        const femaleVoice = voices.find(voice => 
-                            voice.lang.startsWith(selectedLanguage.split('-')[0]) && 
-                            (voice.name.toLowerCase().includes('female') || 
-                             voice.name.toLowerCase().includes('woman') ||
-                             voice.name.toLowerCase().includes('zira') ||
-                             voice.name.toLowerCase().includes('huihui') ||
-                             voice.name.toLowerCase().includes('yaoyao') ||
-                             voice.name.toLowerCase().includes('google us english') ||
-                             voice.name.toLowerCase().includes('samantha'))
-                        );
+                        // Select appropriate voice for the language
+                        let selectedVoice = null;
                         
-                        if (femaleVoice) {
-                            utterance.voice = femaleVoice;
+                        if (selectedLanguage === 'zh-CN') {
+                            // Chinese voice selection - prioritize working Chinese voices
+                            selectedVoice = voices.find(voice => 
+                                (voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')) &&
+                                (voice.name.toLowerCase().includes('female') || 
+                                 voice.name.toLowerCase().includes('huihui') ||
+                                 voice.name.toLowerCase().includes('yaoyao') ||
+                                 voice.name.toLowerCase().includes('ting-ting') ||
+                                 voice.name.toLowerCase().includes('mei-jia') ||
+                                 voice.name.includes('中文'))
+                            );
+                            
+                            // Fallback to any Chinese voice
+                            if (!selectedVoice) {
+                                selectedVoice = voices.find(voice => 
+                                    voice.lang === 'zh-CN' || voice.lang === 'zh-TW' || voice.lang.startsWith('zh')
+                                );
+                            }
+                        } else {
+                            // English voice selection
+                            selectedVoice = voices.find(voice => 
+                                voice.lang.startsWith('en') && 
+                                (voice.name.toLowerCase().includes('female') || 
+                                 voice.name.toLowerCase().includes('woman') ||
+                                 voice.name.toLowerCase().includes('zira') ||
+                                 voice.name.toLowerCase().includes('samantha') ||
+                                 voice.name.toLowerCase().includes('google'))
+                            );
+                            
+                            // Fallback to any English voice
+                            if (!selectedVoice) {
+                                selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+                            }
                         }
+                        
+                        if (selectedVoice) {
+                            utterance.voice = selectedVoice;
+                        }
+                        
+                        // Additional settings for better mobile compatibility
+                        utterance.rate = 0.9; // Slightly slower for clarity
+                        utterance.pitch = 1.1; // Slightly higher pitch for female voice
+                        utterance.volume = 1.0;
                         
                         // 添加视觉提示
                         card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
