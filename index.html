@@ -1,0 +1,500 @@
+这是最新的 `index.html` 代码。
+
+这个版本包含了我们之前讨论的所有功能：
+
+1.  **真实的菜单和价格**（基于您提供的旧网站截图）。
+2.  **正确的营业时间**（10:30 AM - 7:30 PM，周二休息）。
+3.  **语音朗读功能**（点击图片朗读菜名）。
+4.  **视频播放器**（我已经将路径预设为您截图中的 **`videos/making food.MP4`**）。
+
+### **如何更新您的本地文件：**
+
+1.  在您的电脑上，右键点击 `index.html` -\> **打开方式** -\> **记事本 (Notepad)**。
+2.  **删除** 里面的所有内容。
+3.  **复制** 下面的所有代码，**粘贴** 进去。
+4.  **保存** (Ctrl+S)。
+
+然后您就可以继续在终端里运行 `git add index.html` 了。
+
+```html:index.html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="饺饺者 Dumpling Man - 手工饺子和中式风味小吃 | Fairfax, VA">
+    <meta name="theme-color" content="#D62F2F">
+    <title>饺饺者 (Dumpling Man) - Fairfax, VA 菜单</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Mobile-optimized touch targets */
+        .clickable-audio-image {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Smooth scrolling for mobile */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* 自定义 Tailwind 颜色，增强食欲感 */
+        :root {
+            --color-primary-red: #D62F2F; /* 更深的番茄红/辣椒红 */
+            --color-accent-gold: #FFD700; /* 用于可能的高亮或点缀 */
+            --color-bg-light: #FBF7F4;   /* 柔和的沙色/米色背景 */
+            --color-card-bg: #F5F5F5;    /* 浅灰白卡片背景 */
+            --color-text-dark: #333333;  /* 深灰文本 */
+            --color-text-medium: #555555; /* 中灰文本 */
+        }
+
+        /* 覆盖 Tailwind 默认类以使用自定义颜色 */
+        .text-red-700 { color: var(--color-primary-red); }
+        .border-red-200 { border-color: #F8D1D1; }
+        .bg-gray-100 { background-color: var(--color-bg-light); }
+        .bg-white { background-color: var(--color-card-bg); }
+        .text-gray-800 { color: var(--color-text-dark); }
+        .text-gray-900 { color: var(--color-text-dark); }
+        .text-gray-600 { color: var(--color-text-medium); }
+        .text-gray-700 { color: var(--color-text-medium); }
+        .text-gray-500 { color: #888888; }
+        .ring-red-500 { --tw-ring-color: var(--color-primary-red); }
+        
+        /* Mobile-optimized card interactions */
+        .hover\:scale-105:hover {
+            transform: scale(1.02);
+        }
+        
+        @media (min-width: 768px) {
+            .hover\:scale-105:hover {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Better mobile video controls */
+        video {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Improve tap highlighting on mobile */
+        * {
+            -webkit-tap-highlight-color: rgba(214, 47, 47, 0.2);
+        }
+        
+        /* Mobile-friendly spacing */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold text-center text-red-700">
+                饺饺者
+                <span class="block text-xl sm:text-3xl text-gray-700 mt-1 sm:mt-2 font-normal">Dumpling Man</span>
+            </h1>
+            <p class="text-base sm:text-lg text-gray-600 text-center mt-2 sm:mt-3">
+                手工饺子 &amp; 中式风味小吃 &middot; Fairfax, VA
+            </p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+        <section class="mb-12 sm:mb-16 bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="p-4 sm:p-6 md:p-10">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 mb-4 sm:mb-6 text-center">
+                    欢迎来到我们的餐厅
+                </h2>
+                
+                <div class="aspect-video rounded-lg overflow-hidden border border-gray-200">
+                    <video controls playsinline class="w-full h-full object-cover bg-gray-200">
+                        <source src="videos/making food.MP4" type="video/mp4">
+                        您的浏览器不支持 HTML5 视频。
+                    </video>
+                </div>
+                <p class="text-sm sm:text-base text-gray-600 mt-4 sm:mt-6 text-center">
+                    观看我们的短片，感受餐厅的氛围和招牌菜的制作过程。
+                </p>
+            </div>
+        </section>
+
+        <section id="dumplings" class="mb-12">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-red-700 mb-6 sm:mb-8 border-b-2 border-red-200 pb-3 sm:pb-4">
+                水饺类 (Dumplings - 12 pcs)
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 -mt-4 sm:-mt-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 inline-block -mt-1 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.828 2.828a1 1 0 011.414 0A5.98 5.98 0 0115 10a5.98 5.98 0 01-1.757 4.243 1 1 0 01-1.414-1.414A3.986 3.986 0 0013 10a3.986 3.986 0 00-1.172-2.828 1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                点击图片即可收听菜品读音。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fee2e2/991b1b?text=韭菜虾仁水饺" alt="[图片：猪肉韭菜虾仁水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">猪肉韭菜虾仁水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$13.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork, Shrimp & Chive Dumplings</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="images/dumplings/pork-shrimp-chive.jpg" alt="[图片：白菜肉水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">白菜肉水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Napa Cabbage Dumplings</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fee2e2/991b1b?text=芹菜肉水饺" alt="[图片：芹菜肉水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">芹菜肉水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Celery Dumplings</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fef2f2/7f1d1d?text=韭菜猪肉水饺" alt="[图片：韭菜猪肉水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">韭菜猪肉水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Chive Dumplings</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fee2e2/991b1b?text=荠菜水饺" alt="[图片：荠菜水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">荠菜水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Shepherd's Purse Dumplings</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fef2f2/7f1d1d?text=酸菜肉水饺" alt="[图片：酸菜肉水饺]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">酸菜肉水饺</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Pickled Cabbage Dumplings</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wontons" class="mb-12">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-red-700 mb-6 sm:mb-8 border-b-2 border-red-200 pb-3 sm:pb-4">
+                馄饨类 (Wontons - 12 pcs)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fecaca/7f1d1d?text=虾仁馄饨" alt="[图片：虾仁馄饨]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">虾仁馄饨 (汤)</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$10.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Shrimp Wontons Soup</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fecaca/7f1d1d?text=蛋黄馄饨" alt="[图片：蛋黄馄饨]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">蛋黄馄饨 (汤)</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$11.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork & Salted Egg Yolk Wontons Soup</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fecaca/7f1d1d?text=鲜肉馄饨" alt="[图片：鲜肉馄饨]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">鲜肉馄饨 (汤)</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$9.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Pork Wontons Soup</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="appetizers" class="mb-12">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-red-700 mb-6 sm:mb-8 border-b-2 border-red-200 pb-3 sm:pb-4">
+                凉菜类 (Cold Appetizers)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=招牌溏心茶叶蛋" alt="[图片：招牌溏心茶叶蛋]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">招牌溏心茶叶蛋</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$2.00</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Signature Tea Egg (Soft Yolk)</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=凉拌土豆丝" alt="[图片：凉拌土豆丝]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">凉拌土豆丝</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$3.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Cold Shredded Potato</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=酸辣黄瓜条" alt="[图片：酸辣黄瓜条]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">酸辣黄瓜条</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$3.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Spicy & Sour Cucumber Strips</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=山东凉粉" alt="[图片：山东凉粉]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">山东凉粉</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$3.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Shandong Style Cold Jelly</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skewers" class="mb-12">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-red-700 mb-6 sm:mb-8 border-b-2 border-red-200 pb-3 sm:pb-4">
+                特色烤肉 (Signature Grilled Meats - 1 pc)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=特色烤猪肉串" alt="[图片：特色烤猪肉串]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">微波肉 (后肘肉)</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$2.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Signature Grilled Pork Skewers</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=微波鸡腿肉" alt="[图片：微波鸡腿肉]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">微波鸡腿肉</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$2.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Signature Grilled Chicken Thigh Skewers</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/fca5a5/7f1d1d?text=微波鸡心" alt="[图片：微波鸡心]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">微波鸡心</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$1.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Signature Grilled Chicken Hearts Skewers</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="addons-beverages" class="mb-12">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-red-700 mb-6 sm:mb-8 border-b-2 border-red-200 pb-3 sm:pb-4">
+                小料 & 饮品 (Add-Ons & Beverages)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/dbeafe/1e3a8a?text=饮品" alt="[图片：饮品]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">可口可乐</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$1.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Coca Cola</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/dbeafe/1e3a8a?text=瓶装水" alt="[图片：瓶装水]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">瓶装水</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$1.00</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Water</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/dbeafe/1e3a8a?text=茶" alt="[图片：茶]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">茶</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$2.99</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Tea</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105">
+                    <img src="https://placehold.co/600x400/e0e7ff/3730a3?text=额外小料" alt="[图片：额外小料]" class="w-full h-40 sm:h-48 object-cover clickable-audio-image cursor-pointer">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 w-2/3">额外小料</h4>
+                            <span class="text-lg sm:text-xl font-semibold text-red-700 text-right">$0.50</span>
+                        </div>
+                        <p class="text-sm sm:text-base text-gray-600">Extra Condiments (Chili Oil, Soy Sauce, etc.)</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="info" class="mb-12 bg-white rounded-lg shadow-xl overflow-hidden p-4 sm:p-6 md:p-10">
+            <h3 class="text-2xl sm:text-3xl font-semibold text-red-700 mb-6 text-center">
+                餐厅信息 (Info)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 text-center">
+                <div>
+                    <h4 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">地址 (Address)</h4>
+                    <p class="text-sm sm:text-base text-gray-600">
+                        11260 James Swart Cir Unit E,
+                        <br>Fairfax, VA 22030
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">营业时间 (Hours)</h4>
+                    <p class="text-sm sm:text-base text-gray-600">
+                        周一 (Mon): 10:30 AM - 7:30 PM
+                        <br><span class="font-bold text-red-600">周二 (Tue): 休息 (Closed)</span>
+                        <br>周三 - 周日 (Wed - Sun): 10:30 AM - 7:30 PM
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">联系 (Contact)</h4>
+                    <p class="text-sm sm:text-base text-gray-600">
+                        电话: <a href="tel:+17078712400" class="text-red-700 hover:underline">(707) 871-2400</a>
+                    </p>
+                    <p class="text-gray-600 mt-1">
+                        邮箱: <a href="mailto:77claire33@gmail.com" class="text-red-700 hover:underline">77claire33@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-8 sm:mt-12">
+        <div class="container mx-auto px-4 sm:px-6 py-6 sm:py-8 text-center text-sm sm:text-base text-gray-600">
+            <p>&copy; 2025 饺饺者 (Dumpling Man). 保留所有权利。</p>
+            <p class="mt-2">地址：11260 James Swart Cir Unit E, Fairfax, VA 22030</p>
+            <p class="mt-1">
+                电话：<a href="tel:+17078712400" class="text-red-700 hover:underline">(707) 871-2400</a> | 
+                邮箱: <a href="mailto:77claire33@gmail.com" class="text-red-700 hover:underline">77claire33@gmail.com</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查浏览器是否支持语音合成
+            if (!('speechSynthesis' in window)) {
+                console.warn('抱歉，您的浏览器不支持语音合成功能。');
+                // 移除提示文字
+                const audioHint = document.querySelector('.text-gray-500.mb-6.-mt-6');
+                if (audioHint) {
+                    audioHint.remove();
+                }
+                return;
+            }
+
+            const synth = window.speechSynthesis;
+            const audioImages = document.querySelectorAll('.clickable-audio-image');
+
+            audioImages.forEach(image => {
+                image.addEventListener('click', () => {
+                    // 如果正在朗读，先停止
+                    synth.cancel();
+
+                    // 找到对应的卡片元素
+                    const card = image.closest('.bg-white');
+                    const titleEl = card.querySelector('h4');
+                    const descriptionEl = card.querySelector('p');
+
+                    if (titleEl && descriptionEl) {
+                        const chineseName = titleEl.innerText.split('(')[0].trim(); // 去掉括号里的内容
+                        const englishName = descriptionEl.innerText;
+                        
+                        // 组合成要朗读的文本
+                        const textToSpeak = `${chineseName}。${englishName}。`;
+                        
+                        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                        
+                        // 设置语言为中文，以确保中文发音正确
+                        utterance.lang = 'zh-CN'; 
+                        
+                        // 添加视觉提示
+                        card.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
+
+                        // 朗读结束后移除视觉提示
+                        utterance.onend = () => {
+                            card.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
+                        };
+
+                        // 朗读
+                        synth.speak(utterance);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+```
